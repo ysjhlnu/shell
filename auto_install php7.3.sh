@@ -1,6 +1,6 @@
 #!/bin/bash
 # by tansi 2019/12/6
-# auto install php
+# auto install php v1
 
 php_src="http://cn2.php.net/distributions/php-7.3.3.tar.gz"
 
