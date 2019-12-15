@@ -1,6 +1,6 @@
 #!/bin/bash
-# by tansi 2019/12/12
-# auto install jumpserver v1
+# by tansi 2019/12/15
+# auto install jumpserver v1.1
 DEBUG=0
 DB_ENGINE=mysql
 DB_HOST=127.0.0.1
@@ -53,15 +53,43 @@ echo "2)修改yum的配置文件"
 cp /etc/yum.conf /etc/yum.conf.bak
 sed -ri 's/^plugins=.*/plugins=0/' /etc/yum.conf
 
-echo "2.获取阿里云 repo"
+echo "2.aliyun yum"
 cp /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
 wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
 
+# epel 
 mv /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.backup
 mv /etc/yum.repos.d/epel-testing.repo /etc/yum.repos.d/epel-testing.repo.backup
 wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
 yum install -y epel-release
 wget -O /etc/yum.repos.d/nginx.repo https://files.ysjhlnu.top/service/nginx.repo
+
+# docker-ce stable
+cat > /etc/yum.repos.d/docker.repo << EOF
+[docker-ce-stable]
+name=Docker CE Stable - \$basearch
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/centos/7/\$basearch/stable
+enabled=1
+gpgcheck=0
+gpgkey=https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/centos/gpg
+EOF
+
+# mariadb 
+cat > /etc/yum.repos.d/mariadb.repo <<-EOF
+[mariadb]
+name = MariaDB
+baseurl = https://mirrors.ustc.edu.cn/mariadb/yum/10.2/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1 
+EOF
+
+cat >> /etc/sysctl.conf << EOF
+net.ipv4.ip_forward = 1
+fs.nr_open = 10245760000
+ 
+EOF
+
+sysctl -p
 
 echo "***设置selinux***"
 setenforce 0
@@ -147,15 +175,13 @@ cd /opt/jumpserver/requirements
 sh /opt/jumpserver/utils/make_migrations.sh
 
 echo ""
-echo "***** 启动jumpserver *****"
-# 后台运行使用 -d 参数./jms start -d
-# 新版本更新了运行脚本, 使用方式./jms start|stop|status all  后台运行请添加 -d 参数
+echo "*** 启动jumpserver ***"
 /opt/jumpserver/jms start all -d
 
 echo "***systemd 管理jumpserver***"
 wget -O /usr/lib/systemd/system/jms.service https://demo.jumpserver.org/download/shell/centos/jms.service
 chmod 755 /usr/lib/systemd/system/jms.service
-systemctl enable jms  # 配置自启
+systemctl enable jms  
 
 # coco
 cd /opt
