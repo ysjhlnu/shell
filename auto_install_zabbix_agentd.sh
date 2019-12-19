@@ -54,8 +54,8 @@ Type=forking
 Restart=on-failure
 PIDFile=/tmp/zabbix_agentd.pid
 KillMode=control-group
-ExecStart=/usr/local/zabbix/sbin/zabbix_agentd -c "$CONFFILE"
-ExecStop=/bin/kill -SIGTERM "$MAINPID"
+ExecStart=/usr/local/zabbix/sbin/zabbix_agentd -c "\$CONFFILE"
+ExecStop=/bin/kill -SIGTERM "\$MAINPID"
 RestartSec=10s
 
 [Install]
