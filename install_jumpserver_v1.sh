@@ -187,8 +187,8 @@ systemctl enable jms
 cd /opt
 git clone https://github.com/jumpserver/coco.git
 echo "source /opt/py3/bin/activate" > /opt/coco/.env
-yum -y  install $(cat ./coco/requirements/rpm_requirements.txt)
-pip install -r /coco/requirements/requirements.txt
+yum -y  install $(cat /opt/coco/requirements/rpm_requirements.txt)
+pip install -r /opt/coco/requirements/requirements.txt
 mkdir /opt/coco/keys /opt/coco/logs
 cp /opt/coco/config_example.yml /opt/coco/config.yml	#注意：将BOOTSTRAP_TOKEN设置和Jumpserver的一样
 cd /opt/coco/
@@ -197,7 +197,10 @@ sed -i "s/BOOTSTRAP_TOKEN: <PleasgeChangeSameWithJumpserver>/BOOTSTRAP_TOKEN: $B
 
 # Web Terminal
 cd /opt
-wget https://github.com/jumpserver/luna/releases/download/1.5.5/luna.tar.gz
+if [ ! -f "luna.tar.gz" ];then
+	wget https://github.com/jumpserver/luna/releases/download/1.5.5/luna.tar.gz
+fi
+
 tar xf luna.tar.gz
 chown -R root:root luna
 

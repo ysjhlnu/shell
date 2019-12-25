@@ -5,7 +5,7 @@ PACKAGE_SRC=/usr/local/src
 PACKAGE_NAME=zabbix-4.0.13.tar.gz
 ZAB_URL=https://nchc.dl.sourceforge.net/project/zabbix/ZABBIX%20Latest%20Stable/4.0.13/zabbix-4.0.13.tar.gz
 SERVER_IP=192.168.1.6
-LOCAL_IP="`hostname-I` | awk '{print $1}'"
+LOCAL_IP="`hostname-I | awk '{print $1}'`"
 echo "***编译安装zabbix agent***"
 echo "***创建组和用户***"
 groupadd zabbix
