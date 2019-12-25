@@ -168,8 +168,10 @@ EOF
 
 echo "***初始化mysql***"
 
-/usr/local/mysql/bin/mysqld --initialize-secure --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql
+/usr/local/mysql/bin/mysqld --initialize-insecure --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql
 
+chmod -R 755 /data/mysql/
+chown -R mysql:mysql /data/mysql/
 #if [ $? -ne 0 ];then
 #	exit 1
 #fi
