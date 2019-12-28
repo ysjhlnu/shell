@@ -101,6 +101,6 @@ case $1 in
         fi
         ;;
         *)
-        echo -e "\e[033mUsage: sh $0 [estab|closing|listen|Syn_sent|syn-recv|closed|last-ack|unconn|close-wait|time-wait|fin-wait2|fin-wait1]"
+        echo -e "\e[033mUsage: sh $0 [estab|closing|listen|Syn_sent|syn-recv|closed|last-ack|unconn|close-wait|time-wait|fin-wait2|fin-wait1]\e[0m"
 esac
 
