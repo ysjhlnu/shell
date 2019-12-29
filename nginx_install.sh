@@ -183,20 +183,24 @@ else
 		fi
 	fi 		
 fi
+echo >>/etc/profile<<-EOF
+export PATH=/usr/local/nginx/sbin
+EOF
+source /etc/profile
 
 echo "创建启动服务"
-vim /lib/systemd/system/nginx.service <<-EOF
+cat > /lib/systemd/system/nginx.service <<-EOF
 [Unit]
 Description=nginx
-After=network.target
+After=network.target remote-fs.target nss-lookup.target
 
 [Service]
 Type=forking
-PIDFile=$ngx_path/logs/nginx.pid
-ExecStart=$ngx_path/sbin/nginx -c $ngx_path/conf/nginx.conf
-ExecStartPre=$ngx_path/sbin/nginx -t -c $ngx_path/conf/nginx.conf
-ExecReload=$ngx_path/sbin/nginx reload
-ExecStop=$ngx_path/sbin/nginx quit
+PIDFile=${ngx_path}/logs/nginx.pid
+ExecStartPre=${ngx_path}/sbin/nginx -t
+ExecStart=${ngx_path}/sbin/nginx 
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
 
 [Install]
@@ -204,11 +208,13 @@ WantedBy=multi-user.target
 EOF
 
 echo "设置开机自启动"
-systemctl enable nginx && systemctl start nginx
+systemctl daemon-reload
+systemctl enable nginx 
+systemctl start nginx
 
 echo "设置nginx别名"
-vim ~/.bashrc <<-EOF
-alias nginx="$ngx_path/sbin/nginx"
+cat>> ~/.bashrc <<-EOF
+alias nginx="${ngx_path}/sbin/nginx"
 EOF
 
 source ~/.bashrc
@@ -217,18 +223,7 @@ source ~/.bashrc
 echo "返回到目录：/usr/local/src"
 cd "$src_path"
 echo ""
- 
- 
-read -p "是否需要删除下载的安装（输入y/Y删除，其他不删除）：" inputMsg
-if [ "$inputMsg" == 'y' ] || [ "$inputMsg" == 'Y' ] 
-then
-    rm -rf *.tar.gz
-    rm -rf *.zip
-    echo "删除完成"
-else
-    echo "不删除"
-fi
-echo ""
+
  
 echo "安装路径: " $src_path
 echo "安装完成!"
