@@ -3,17 +3,18 @@
 # install nginx
 echo "开始安装"
 
-zlib_version="1.2.11"
-nginx_version="1.17.6"
-pcre_version="8.43"
+zlib_version=1.2.11
+nginx_version=1.17.6
+pcre_version=8.43
+openssl_version=1.1.1
 src_path=/usr/local/src
 ngx_path=/usr/local/nginx
 nginx_url="http://nginx.org/download/nginx-${nginx_version}.tar.gz"
 zlib_url="http://www.zlib.net/zlib-1.2.11.tar.gz"
-openssl_url="http://www.openssl.org/source/openssl-"${openssl_version}".tar.gz"
+openssl_url="http://www.openssl.org/source/openssl-${openssl_version}.tar.gz"
 ngx_cache_purge_url="http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz"
-pcre_url="wget https://ftp.pcre.org/pub/pcre/pcre-8.43.tar.gz"
-ngx-sticky-module="https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/08a395c66e42.zip"
+pcre_url="http://file.ysjhlnu.top/software/pcre-8.43.tar.gz"
+ngx_sticky_module="https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/08a395c66e42.zip"
 
 src_path=/usr/local/src
 ngx_path=/usr/local/nginx
@@ -34,7 +35,7 @@ mkdir "${src_path}"
 mkdir "${ngx_path}"
 
 echo "进入目录：/usr/local/src"
-cd "$src_path"
+cd "${src_path}"
 
 echo "下载$ngx_cache_purge"
 
@@ -51,10 +52,10 @@ tar -zxf ngx_cache_purge-2.3.tar.gz
 echo "下载nginx-sticky-module"
 
 if [ ! -f "08a395c66e42.zip" ];then
-	wget "${ngx-sticky-module}"
+	wget "${ngx_sticky_module}"
 fi
 unzip 08a395c66e42.zip
-mv nginx-goodies-nginx-sticky-module-ng-08a395c66e42 nginx-sticky-module
+mv nginx-goodies-nginx-sticky-module-ng-08a395c66e42 nginx_sticky_module
  
 echo "下载nginx-http-concat"
 if [ ! -d "nginx-http-concat" ];then
@@ -62,20 +63,20 @@ if [ ! -d "nginx-http-concat" ];then
 fi
 
  
-echo "下载：pcre-"$pcre_version""
+echo "下载：pcre"
 
 if [ ! -f "pcre-8.43.tar.gz" ];then
 	wget "${pcre_url}"
 fi
 
 echo "解压：pcre-${pcre_version}.tar.gz"
-tar -zxf pcre-"{$pcre_version}".tar.gz
+tar -zxf pcre-"${pcre_version}".tar.gz
 
 cd pcre-"$pcre_version"
 echo "编译安装：pcre-${pcre_version}"
 ./configure 
 make && make install	
-fi
+
 
 echo "下载ngx_cache_purge-2.3模块"
 if [ ! -f "ngx_cache_purge-2.3.tar.gz" ];then
@@ -90,7 +91,7 @@ if [ ! -f "openssl-1.1.1.tar.gz" ];then
 	wget "${openssl_url}" 
 fi
 tar -zxf openssl-"${openssl_version}".tar.gz
-cd openssl-"$openssl_version"
+cd openssl-"{$openssl_version}"
 echo "编译安装：openssl-${openssl_version}"
 ./configure 
 make && make install 
@@ -101,10 +102,10 @@ cd /usr/local/src
 
 echo "下载：zlib-1.2.11"
 
-if [! -f "zlib-1.2.11.tar.gz" ];then
+if [ ! -f "zlib-1.2.11.tar.gz" ];then
 	wget "${zlib_url}"		
 fi
-tar -zxf zlib-"$zlib_version".tar.gz
+tar -zxf zlib-"${zlib_version}".tar.gz
 cd zlib-"${zlib_version}"
 ./configure 
 make && make install 	
@@ -124,7 +125,7 @@ mv nginx-"${nginx_version}" nginx
 echo "进入目录：nginx"
 cd nginx
 echo "编译安装：nginx-${nginx_version}"
-./configure --user=nginx --group=nginx --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_gzip_static_module --with-http_realip_module --with-http_sub_module --with-http_ssl_module --with-http_v2_module --with-http_image_filter_module --with-http_gunzip_module --with-stream --with-stream_ssl_module --with-ipv6 --with-http_flv_module --with-http_addition_module --with-http_mp4_module --with-pcre=/usr/local/src/pcre-8.43 --with-zlib=/usr/local/src/zlib-1.2.11 --with-openssl=/usr/local/src/openssl-1.1.1 --add-module=/usr/local/src/nginx-sticky-module --add-module=/usr/local/src/nginx-http-concat --add-module=/usr/local/src/ngx_cache_purge-2.3 --with-cc-opt=-Wno-error
+./configure --user=nginx --group=nginx --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_gzip_static_module --with-http_realip_module --with-http_sub_module --with-http_ssl_module --with-http_v2_module --with-http_image_filter_module --with-http_gunzip_module --with-stream --with-stream_ssl_module --with-ipv6 --with-http_flv_module --with-http_addition_module --with-http_mp4_module --with-pcre=/usr/local/src/pcre-8.43 --with-zlib=/usr/local/src/zlib-1.2.11 --with-openssl=/usr/local/src/openssl-1.1.1 --add-module=/usr/local/src/nginx_sticky_module --add-module=/usr/local/src/nginx-http-concat --add-module=/usr/local/src/ngx_cache_purge-2.3 --with-cc-opt=-Wno-error
 
 
 make && make install 
@@ -132,9 +133,11 @@ if [ $? -ne 0 ];then
 	echo "请重新检查"
 	exit 1
 fi
-echo >>/etc/profile<<-EOF
+cat >>/etc/profile<<-EOF
 export PATH=\$PATH:/usr/local/nginx/sbin
 EOF
+
+source /etc/profile
 source /etc/profile
 
 echo "创建启动服务"
