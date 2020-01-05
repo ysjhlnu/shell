@@ -9,7 +9,6 @@ mysql_src="https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.16.tar.gz"
 boost_src="https://ufpr.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz"
 cmake_src="https://cmake.org/files/v3.7/cmake-3.7.2.tar.gz"
 
-
 echo "start install mysql 5.7"
 
 echo "***创建组和用户***"
@@ -22,90 +21,73 @@ mkdir -p ${install_path}
 chown -R mysql:mysql ${data_path}
 chown -R mysql:mysql ${install_path}
 
-
 echo "***安装依赖包***"
-yum install -y gcc gcc-c++ make tar openssl openssl-devel cmake ncurses ncurses-devel bison
+yum install -y gcc gcc-c++ make tar openssl openssl-devel cmake ncurses ncurses-devel bison wget vim lrzsz
 
 cd ${src_package}
 
 echo "***下载cmake包***"
-while [ ! -d "cmake" ];do
-	if [ ! -f "cmake-3.7.2.tar.gz" ];then
-		wget ${cmake_src}
-		if [ $? -eq 0 ];then	
-			echo "download success"
-		fi
+
+if [ ! -f "cmake-3.7.2.tar.gz" ];then
+	wget ${cmake_src}
+	if [ $? -eq 0 ];then
+		echo "download success"
 	fi
-	tar -zxf cmake-3.7.2.tar.gz 
-	mv cmake-3.7.2 cmake 
-	echo "cmake下载完成."
-done
-
-
-cd cmake
-./configure
-
-if [ $? -ne 0 ];then
-	exit 1
 fi
+tar -zxf cmake-3.7.2.tar.gz 
+cd cmake-3.7.2
+./configure
 make && make install
 if [ $? -eq 0 ];then
-	echo "cmake 编译完成。"
+	echo "cmake make success!" >> /tmp/compile_mysql.txt
 fi
-
-
 
 cd ${src_package}
 echo "下载boost包"
-while [ ! -d "boost" ];do
-	if [ ! -f "boost_1_59_0.tar.gz" ];then
-		wget ${boost_src}
-		if [ $? -eq 0 ];then	
-			echo "download success"
-		fi
-	fi
-	tar -xf boost_1_59_0.tar.gz
-	mv boost_1_59_0 boost
-	echo "boost下载完成."
-done
 
+if [ ! -f "boost_1_59_0.tar.gz" ];then
+	wget ${boost_src}
+	if [ $? -eq 0 ];then	
+		echo "download success"
+	fi
+fi
+tar -xf boost_1_59_0.tar.gz
+mv boost_1_59_0 boost
 
 echo "下载mysql 5.7源码包"
 cd ${src_package}
 
-
-while [ ! -d "mysql" ];do
-	if [ ! -f "mysql-5.7.16.tar.gz" ];then
-		wget ${mysql_src}
-		if [ $? -eq 0 ];then	
-			echo "download success"
-		fi
+if [ ! -f "mysql-5.7.16.tar.gz" ];then
+	wget ${mysql_src}
+	if [ $? -eq 0 ];then	
+		echo "download success"
 	fi
-	tar -zxf mysql-5.7.16.tar.gz
-	mv mysql-5.7.16 mysql
-	echo "编译中..."
-done
+fi
+tar -zxf mysql-5.7.16.tar.gz
+cd mysql-5.7.16 
 
-
-cd mysql
 cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DMYSQL_USER=mysql -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_general_ci -DENABLED_LOCAL_INFILE=ON -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_FEDERATED_STORAGE_ENGINE=1 -DWITH_BLACKHOLE_STORAGE_ENGINE=1 -DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 -DWITH_EMBEDDED_SERVER=OFF -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/usr/local/src/boost
 
 if [ $? -eq 0 ];then
 	echo "检查成功"
+	echo "mysql config checkout success" >> /tmp/compile_mysql.txt
 else
 	echo "检查失败"
 	rm -rf CMakeCache.txt
 	exit 1
 fi
 
-make -j && make install
+make
+make install
 
-if [ $? -ne 0 ];then
+if [ $? -eq 0 ];then
+	echo "mysql make install success" >> /tmp/compile_mysql.txt
+else
 	exit 1
 fi
 
 echo "***复制配置文件***"
-
+mv /etc/my.cnf /etc/my.cnf.bak
 cat <<-EOF >> /etc/my.cnf
 [mysqld]
 port = 3306
@@ -172,16 +154,10 @@ echo "***初始化mysql***"
 
 chmod -R 755 /data/mysql/
 chown -R mysql:mysql /data/mysql/
-#if [ $? -ne 0 ];then
-#	exit 1
-#fi
 
-#echo "***加入系统启动***"
-#cp /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld
-#chmod 755 /etc/init.d/mysqld
 
 echo "***配置环境变量***"
-echo "export PATH=$PATH:/usr/local/mysql/bin" >> /etc/profile
+echo "export PATH=\$PATH:/usr/local/mysql/bin" >> /etc/profile
 source /etc/profile 
 
 ln -s /usr/local/mysql/lib/mysql /usr/lib/mysql
