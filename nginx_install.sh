@@ -10,11 +10,11 @@ openssl_version=1.1.1
 src_path=/usr/local/src
 ngx_path=/usr/local/nginx
 nginx_url="http://nginx.org/download/nginx-${nginx_version}.tar.gz"
-zlib_url="http://www.zlib.net/zlib-1.2.11.tar.gz"
+zlib_url="http://file.ysjhlnu.top/software/zlib-1.2.11.tar.gz"
 openssl_url="http://www.openssl.org/source/openssl-${openssl_version}.tar.gz"
 ngx_cache_purge_url="http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz"
 pcre_url="http://file.ysjhlnu.top/software/pcre-8.43.tar.gz"
-ngx_sticky_module="https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/08a395c66e42.zip"
+ngx_sticky_module="http://file.ysjhlnu.top/software/nginx-goodies-nginx-sticky-module-ng-08a395c66e42.zip"
 
 src_path=/usr/local/src
 ngx_path=/usr/local/nginx
@@ -27,7 +27,7 @@ echo "创建用户和组:"
 groupadd nginx && useradd -s /sbin/nologin -g nginx -M nginx
 
 echo "安装依赖包:"
-yum install -y gcc gcc-c++ gd gd-devel unzip git
+yum install -y gcc gcc-c++ gd gd-devel unzip git wget vim 
 
 echo "创建安装目录和nginx安装目录"
 
@@ -145,16 +145,14 @@ cat > /lib/systemd/system/nginx.service <<-EOF
 [Unit]
 Description=nginx
 After=network.target remote-fs.target nss-lookup.target
-
 [Service]
 Type=forking
 PIDFile=${ngx_path}/logs/nginx.pid
 ExecStartPre=${ngx_path}/sbin/nginx -t
 ExecStart=${ngx_path}/sbin/nginx 
-ExecReload=/bin/kill -s HUP $MAINPID
-ExecStop=/bin/kill -s QUIT $MAINPID
+ExecReload=/bin/kill -s HUP \$MAINPID
+ExecStop=/bin/kill -s QUIT \$MAINPID
 PrivateTmp=true
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -166,3 +164,4 @@ systemctl start nginx
 
 echo "安装路径: " "${src_path}"
 echo "安装完成!"
+source /etc/profile
