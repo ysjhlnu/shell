@@ -203,36 +203,36 @@ mysql_env() {
 
 	echo "start install mysql 5.7"
 
-#	echo "***创建组和用户***"
-#	groupadd mysql
-#	useradd mysql -s /sbin/nologin -M -g mysql
+	echo "***创建组和用户***"
+	groupadd mysql
+	useradd mysql -s /sbin/nologin -M -g mysql
 
-#	echo "***创建数据存放的目录***"
-#	mkdir -p ${data_path}
-#	mkdir -p ${install_path}
-#	chown -R mysql:mysql ${data_path}
-#	chown -R mysql:mysql ${install_path}
+	echo "***创建数据存放的目录***"
+	mkdir -p ${data_path}
+	mkdir -p ${install_path}
+	chown -R mysql:mysql ${data_path}
+	chown -R mysql:mysql ${install_path}
 
 	echo "***安装依赖包***"
-#	yum install -y gcc gcc-c++ make tar openssl openssl-devel cmake ncurses ncurses-devel bison wget vim lrzsz
+	yum install -y gcc gcc-c++ make tar openssl openssl-devel cmake ncurses ncurses-devel bison wget vim lrzsz
 
 	cd ${src_package}
 
-#	echo "***下载cmake包***"
-#
-#	if [ ! -f "cmake-3.7.2.tar.gz" ];then
-#		wget ${cmake_src}
-#		if [ $? -eq 0 ];then
-#			echo "download success"
-#		fi
-#	fi
-#	tar -zxf cmake-3.7.2.tar.gz 
-#	cd cmake-3.7.2
-#	./configure
-#	make && make install
-#	if [ $? -eq 0 ];then
-#		echo "cmake make success!" >> /tmp/compile_mysql.txt
-#	fi
+	echo "***下载cmake包***"
+
+	if [ ! -f "cmake-3.7.2.tar.gz" ];then
+		wget ${cmake_src}
+		if [ $? -eq 0 ];then
+			echo "download success"
+		fi
+	fi
+	tar -zxf cmake-3.7.2.tar.gz 
+	cd cmake-3.7.2
+	./configure
+	make && make install
+	if [ $? -eq 0 ];then
+		echo "cmake make success!" >> /tmp/compile_mysql.txt
+	fi
 
 	cd ${src_package}
 	echo "下载boost包"

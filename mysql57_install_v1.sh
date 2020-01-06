@@ -6,7 +6,7 @@ src_package=/usr/local/src
 install_path=/usr/local/mysql
 data_path=/data/mysql
 mysql_src="https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.16.tar.gz"
-boost_src="https://ufpr.dl.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz"
+boost_src="http://file.ysjhlnu.top/software/boost_1_59_0.tar.gz"
 cmake_src="https://cmake.org/files/v3.7/cmake-3.7.2.tar.gz"
 
 echo "start install mysql 5.7"
