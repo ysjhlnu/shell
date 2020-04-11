@@ -49,7 +49,7 @@ ngx_sticky_module(){
 	mv nginx-goodies-nginx-sticky-module-ng-08a395c66e42 nginx_sticky_module
 }
 
-nginx-http-concat(){
+nginx_http_concat(){
 	cd /usr/local/src
 	echo "下载nginx-http-concat"
 	if [ ! -d "nginx-http-concat" ];then
@@ -84,7 +84,7 @@ ngx_cache_purge(){
 	tar -zxf ngx_cache_purge-2.3.tar.gz
 }
 
-openssl(){
+my_openssl(){
 	cd /usr/local/src
 	echo "下载：openssl-${openssl_version}"
 	if [ ! -f "openssl-1.1.1.tar.gz" ];then
@@ -163,6 +163,14 @@ nginx(){
 	WantedBy=multi-user.target
 	EOF
 }
+
+ngx_sticky_module()
+nginx_http_concat()
+pcre()
+ngx_cache_purge()
+my_openssl()
+zlib()
+nginx()
 
 echo "设置开机自启动"
 systemctl daemon-reload

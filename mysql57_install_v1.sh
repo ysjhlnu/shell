@@ -5,9 +5,8 @@
 src_package=/usr/local/src
 install_path=/usr/local/mysql
 data_path=/data/mysql
-mysql_src="https://cdn.mysql.com/archives/mysql-5.7/mysql-5.7.16.tar.gz"
+mysql_src="https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7/mysql-5.7.27.tar.gz"
 boost_src="http://file.ysjhlnu.top/software/boost_1_59_0.tar.gz"
-cmake_src="https://cmake.org/files/v3.7/cmake-3.7.2.tar.gz"
 
 echo "start install mysql 5.7"
 
@@ -22,25 +21,11 @@ chown -R mysql:mysql ${data_path}
 chown -R mysql:mysql ${install_path}
 
 echo "***安装依赖包***"
-yum install -y gcc gcc-c++ make tar openssl openssl-devel cmake ncurses ncurses-devel bison wget vim lrzsz
+yum install -y gcc gcc-c++ cmake make tar openssl openssl-devel  ncurses ncurses-devel bison wget vim lrzsz libaio-devel
 
 cd ${src_package}
 
-echo "***下载cmake包***"
 
-if [ ! -f "cmake-3.7.2.tar.gz" ];then
-	wget ${cmake_src}
-	if [ $? -eq 0 ];then
-		echo "download success"
-	fi
-fi
-tar -zxf cmake-3.7.2.tar.gz 
-cd cmake-3.7.2
-./configure
-make && make install
-if [ $? -eq 0 ];then
-	echo "cmake make success!" >> /tmp/compile_mysql.txt
-fi
 
 cd ${src_package}
 echo "下载boost包"
@@ -85,6 +70,13 @@ if [ $? -eq 0 ];then
 else
 	exit 1
 fi
+
+echo "配置环境变量"
+cat >> /etc/profile <<EOF
+export PATH=\$PATH:/usr/local/mysql/bin
+EOF
+
+source /etc/profile
 
 echo "***复制配置文件***"
 mv /etc/my.cnf /etc/my.cnf.bak
@@ -155,10 +147,6 @@ echo "***初始化mysql***"
 chmod -R 755 /data/mysql/
 chown -R mysql:mysql /data/mysql/
 
-
-echo "***配置环境变量***"
-echo "export PATH=\$PATH:/usr/local/mysql/bin" >> /etc/profile
-source /etc/profile 
 
 ln -s /usr/local/mysql/lib/mysql /usr/lib/mysql
 

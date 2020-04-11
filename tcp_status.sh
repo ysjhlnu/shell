@@ -28,7 +28,7 @@ case $1 in
                 echo ${output}
         fi
         ;;
-        Syn_sent)
+        Syn-sent)
         output=$(awk '/SYN-SENT/{print $2}' ${tmp_file})
         if [ "${output}" == "" ];then
                 echo 0
