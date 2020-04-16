@@ -5,8 +5,8 @@
 src_package=/usr/local/src
 install_path=/usr/local/mysql
 data_path=/data/mysql
-mysql_src="https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7/mysql-5.7.27.tar.gz"
-boost_src="http://file.ysjhlnu.top/software/boost_1_59_0.tar.gz"
+mysql_src=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7/mysql-boost-5.7.27.tar.gz
+boost_src=http://file.ysjhlnu.top/software/boost_1_59_0.tar.gz
 
 echo "start install mysql 5.7"
 
@@ -42,16 +42,16 @@ mv boost_1_59_0 boost
 echo "下载mysql 5.7源码包"
 cd ${src_package}
 
-if [ ! -f "mysql-5.7.16.tar.gz" ];then
+if [ ! -f "mysql-boost-5.7.27.tar.gz" ];then
 	wget ${mysql_src}
 	if [ $? -eq 0 ];then	
 		echo "download success"
 	fi
 fi
-tar -zxf mysql-5.7.16.tar.gz
-cd mysql-5.7.16 
+tar -zxf mysql-boost-5.7.27.tar.gz
+cd mysql-5.7.27 
 
-cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DMYSQL_USER=mysql -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_general_ci -DENABLED_LOCAL_INFILE=ON -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_FEDERATED_STORAGE_ENGINE=1 -DWITH_BLACKHOLE_STORAGE_ENGINE=1 -DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 -DWITH_EMBEDDED_SERVER=OFF -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/usr/local/src/boost
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DMYSQL_USER=mysql -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_general_ci -DENABLED_LOCAL_INFILE=ON -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_FEDERATED_STORAGE_ENGINE=1 -DWITH_BLACKHOLE_STORAGE_ENGINE=1 -DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 -DWITH_EMBEDDED_SERVER=OFF -DDOWNLOAD_BOOST=1 -DWITH_BOOST=boost
 
 if [ $? -eq 0 ];then
 	echo "检查成功"
