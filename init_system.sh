@@ -6,6 +6,9 @@ if [ "$(whoami)" != 'root' ];then
 fi
 
 init(){
+	# 同步时间
+	ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+	date
 	yum install -y vim wget curl 
 }
 
