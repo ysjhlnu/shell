@@ -43,8 +43,9 @@ sed -i "s/Server=127.0.0.1/Server=${SERVER_IP}/g"  /usr/local/zabbix/etc/zabbix_
 sed -i "s/Hostname=.*/Hostname=${LOCAL_IP}/g" /usr/local/zabbix/etc/zabbix_agentd.conf
 sed -i "s/ServerActive=127.0.0.1/ServerActive=${SERVER_IP}/g" /usr/local/zabbix/etc/zabbix_agentd.conf
 sed -i "s/# HostnameItem=system.hostname/HostnameItem=system.hostname/g" /usr/local/zabbix/etc/zabbix_agentd.conf
+sed -i "s/# HostMetadata=.*/HostMetadata=system.uname/g" /usr/local/zabbix/etc/zabbix_agentd.conf
 
-cat >/usr/lib/systemd/system/zabbix-agentd.service <<-EOF
+cat >/usr/lib/systemd/system/zabbix-agent.service <<-EOF
 [Unit]
 Description=zabbix-agentd
 After=network.target
