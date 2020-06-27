@@ -116,7 +116,7 @@ max_connect_errors = 100
 open_files_limit = 65535
 
 log_bin=${binlog_path}/mysql-bin
-binlog_format=mixed
+binlog_format=row
 server_id  = 2
 expire_logs_days = 10
 early-plugin-load = ""
