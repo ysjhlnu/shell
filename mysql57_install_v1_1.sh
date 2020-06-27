@@ -5,6 +5,7 @@
 src_package=/usr/local/src
 install_path=/usr/local/mysql
 data_path=/data/mysql
+binlog_path=/data/binlog
 mysql_src=https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-5.7/mysql-boost-5.7.28.tar.gz
 boost_src=http://file.ysjhlnu.top/software/boost_1_59_0.tar.gz
 
@@ -16,8 +17,10 @@ useradd mysql -s /sbin/nologin -M -g mysql
 
 echo "***创建数据存放的目录***"
 mkdir -p ${data_path}
+mkdir -p ${binlog_path}
 mkdir -p ${install_path}
 chown -R mysql:mysql ${data_path}
+chown -R mysql:mysql ${binlog_path}
 chown -R mysql:mysql ${install_path}
 
 echo "***安装依赖包***"
@@ -112,9 +115,9 @@ max_connections = 500
 max_connect_errors = 100
 open_files_limit = 65535
 
-log_bin=mysql-bin
+log_bin=${binlog_path}/mysql-bin
 binlog_format=mixed
-server_id   = 232
+server_id  = 2
 expire_logs_days = 10
 early-plugin-load = ""
 
